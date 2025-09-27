@@ -45,6 +45,22 @@
             </div>
         </div>
 
+        <!-- Upload de NF-e -->
+        <div class="p-strip">
+            <div class="row">
+                <div class="col-12">
+                    <div class="p-card">
+                        <h3 class="p-heading--4">Upload de NF-e (XML)</h3>
+                        <form action="upload_nfe.php" method="post" enctype="multipart/form-data">
+                            <label for="nfe_xml">Selecione o arquivo XML da NF-e:</label>
+                            <input type="file" id="nfe_xml" name="nfe_xml" accept=".xml" required>
+                            <button type="submit" class="p-button--positive">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Seção Principal com Mapa e Feed -->
         <div class="p-strip">
             <div class="row">

@@ -7,7 +7,8 @@ body, html {
 
 #map {
     width: 100%;
-    height: calc(100vh - 250px); /* Ajusta a altura do mapa para acomodar a nova seção de upload */
+    /* A altura será ajustada com base na exibição ou não dos detalhes */
+    height: calc(100vh - 210px); 
 }
 
 #nfe-data.p-card {
@@ -15,4 +16,51 @@ body, html {
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     background-color: #f9f9f9;
+}
+
+#timeline-container {
+    border-left: 3px solid #e6e6e6;
+    padding-left: 20px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -29.5px;
+    top: 5px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #0076f6; /* Azul do Vanilla */
+    border: 3px solid #fff;
+}
+
+.timeline-item-content {
+    padding: 5px;
+}
+
+.timeline-item-content p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.timeline-item-content .status {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.timeline-item-content .timestamp {
+    color: #666;
+    font-size: 0.8rem;
 }

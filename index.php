@@ -27,30 +27,25 @@
     <main>
         <div class="p-strip">
             <div class="row">
-                <div class="col-6">
-                    <h2>Upload de NF-e (XML)</h2>
-                    <form action="upload_nfe.php" method="post" enctype="multipart/form-data">
-                        <label for="nfe_xml">Selecione o arquivo XML da NF-e:</label>
-                        <input type="file" id="nfe_xml" name="nfe_xml" accept=".xml" required>
-                        <button type="submit" class="p-button--positive">Enviar NF-e</button>
+                <div class="col-4">
+                    <h2>Consulta de Entrega</h2>
+                    <form id="search-form">
+                        <label for="nfe_key">Chave da NF-e:</label>
+                        <input type="text" id="nfe_key" name="nfe_key" placeholder="Digite a chave da NF-e" required>
+                        <button type="submit" class="p-button--positive u-align--right">Buscar</button>
                     </form>
+                    <div id="delivery-details" class="u-hide">
+                        <hr>
+                        <h4>Detalhes da Entrega</h4>
+                        <p><strong>Status:</strong> <span id="delivery-status"></span></p>
+                        <p><strong>Origem:</strong> <span id="delivery-origin"></span></p>
+                        <p><strong>Destino:</strong> <span id="delivery-destination"></span></p>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <h2>Dados da NF-e</h2>
-                    <div id="nfe-data" class="p-card">
-                        <?php if (isset($_SESSION['nfe_data'])): ?>
-                            <?php $nfe = $_SESSION['nfe_data']; ?>
-                            <p><strong>Chave de Acesso:</strong><br><?= htmlspecialchars($nfe['chave']) ?></p>
-                            <p><strong>Número:</strong> <?= htmlspecialchars($nfe['numero']) ?></p>
-                            <p><strong>Emitente:</strong> <?= htmlspecialchars($nfe['emitente']) ?></p>
-                            <p><strong>Destinatário:</strong> <?= htmlspecialchars($nfe['destinatario']) ?></p>
-                            <?php 
-                                // Limpa os dados da sessão depois de exibi-los
-                                unset($_SESSION['nfe_data']); 
-                            ?>
-                        <?php else: ?>
-                            <p>Aguardando o upload de um arquivo NF-e...</p>
-                        <?php endif; ?>
+                <div class="col-8">
+                    <h2>Histórico (Timeline)</h2>
+                    <div id="timeline-container">
+                        <p>Busque uma entrega para ver seu histórico de rastreamento.</p>
                     </div>
                 </div>
             </div>

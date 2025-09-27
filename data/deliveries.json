@@ -1,0 +1,69 @@
+[
+  {
+    "delivery_id": "12345",
+    "nfe_key": "41250901234567890123456789012345678901234567",
+    "status": "in_transit",
+    "origin": {
+      "name": "Centro de Distribuição A",
+      "lat": -23.5505,
+      "lng": -46.6333
+    },
+    "destination": {
+      "name": "Cliente Final",
+      "lat": -23.5700,
+      "lng": -46.6500
+    },
+    "current_location": {
+      "lat": -23.5615,
+      "lng": -46.6563
+    },
+    "update_history": [
+      {
+        "timestamp": "2025-09-27T10:00:00Z",
+        "status": "pending_pickup",
+        "location": "Centro de Distribuição A"
+      },
+      {
+        "timestamp": "2025-09-27T12:30:00Z",
+        "status": "in_transit",
+        "location": "A caminho do destinatário"
+      }
+    ]
+  },
+  {
+    "delivery_id": "67890",
+    "nfe_key": "41250998765432109876543210987654321098765432",
+    "status": "delivered",
+    "origin": {
+      "name": "Fornecedor B",
+      "lat": -22.9068,
+      "lng": -43.1729
+    },
+    "destination": {
+      "name": "Centro de Distribuição A",
+      "lat": -23.5505,
+      "lng": -46.6333
+    },
+    "current_location": {
+      "lat": -23.5505,
+      "lng": -46.6333
+    },
+    "update_history": [
+      {
+        "timestamp": "2025-09-26T09:00:00Z",
+        "status": "pending_pickup",
+        "location": "Fornecedor B"
+      },
+      {
+        "timestamp": "2025-09-26T15:00:00Z",
+        "status": "in_transit",
+        "location": "A caminho do CD"
+      },
+      {
+        "timestamp": "2025-09-27T11:00:00Z",
+        "status": "delivered",
+        "location": "Centro de Distribuição A"
+      }
+    ]
+  }
+]

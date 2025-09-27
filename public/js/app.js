@@ -1,112 +1,130 @@
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("Sistema de consulta de entregas iniciado!");
+document.addEventListener('DOMContentLoaded', () => {
+  // KPIs elements
+  const kpiTotal = document.getElementById('kpi-total');
+  const kpiInTransit = document.getElementById('kpi-in-transit');
+  const kpiDelivered = document.getElementById('kpi-delivered');
 
-    // --- Elementos do DOM ---
-    const searchForm = document.getElementById('search-form');
-    const nfeKeyInput = document.getElementById('nfe_key');
-    const deliveryDetailsContainer = document.getElementById('delivery-details');
-    const timelineContainer = document.getElementById('timeline-container');
-    const deliveryStatusEl = document.getElementById('delivery-status');
-    const deliveryOriginEl = document.getElementById('delivery-origin');
-    const deliveryDestinationEl = document.getElementById('delivery-destination');
-    
-    // --- Mapa (Leaflet) ---
-    const map = L.map('map').setView([-14.235, -51.925], 4); // Visão geral do Brasil
-    let routePolyline = null;
-    let originMarker = null;
-    let destinationMarker = null;
-    let truckMarker = null;
+  // Timeline/feed element
+  const timelineContainer = document.getElementById('timeline-container');
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+  // Leaflet Map setup
+  const map = L.map('map').setView([-14.235, -51.925], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
 
-    const truckIcon = L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/64/610/610115.png',
-        iconSize: [38, 38],
-        iconAnchor: [19, 38],
-        popupAnchor: [0, -38]
+  const truckIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/64/610/610115.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -28],
+  });
+
+  let deliveryMarkers = [];
+
+  function clearMarkers() {
+    deliveryMarkers.forEach((m) => map.removeLayer(m));
+    deliveryMarkers = [];
+  }
+
+  function populateKPIs(metrics) {
+    try {
+      kpiTotal.textContent = metrics.total_deliveries ?? 0;
+      kpiInTransit.textContent = metrics.status_count?.in_transit ?? 0;
+      // tenta cobrir possíveis nomes: delivered / entregue
+      kpiDelivered.textContent = metrics.status_count?.delivered ?? metrics.status_count?.entregue ?? 0;
+    } catch (e) {
+      console.error('Erro ao popular KPIs', e);
+    }
+  }
+
+  function populateMap(deliveries) {
+    clearMarkers();
+    const bounds = [];
+
+    deliveries.forEach((d) => {
+      if (d.current_lat && d.current_lng) {
+        const marker = L.marker([d.current_lat, d.current_lng], { icon: truckIcon })
+          .addTo(map)
+          .bindPopup(
+            `<b>Entrega:</b> ${d.delivery_id || ''}<br/>` +
+              `<b>Status:</b> ${d.status || ''}<br/>` +
+              `<b>Destino:</b> ${d.destination_name || ''}`
+          );
+        deliveryMarkers.push(marker);
+        bounds.push([d.current_lat, d.current_lng]);
+      }
     });
 
-    // --- Funções ---
-
-    function updateMap(delivery) {
-        // Limpa camadas anteriores
-        if(routePolyline) map.removeLayer(routePolyline);
-        if(originMarker) map.removeLayer(originMarker);
-        if(destinationMarker) map.removeLayer(destinationMarker);
-        if(truckMarker) map.removeLayer(truckMarker);
-
-        const originLatLng = [delivery.origin.lat, delivery.origin.lng];
-        const destLatLng = [delivery.destination.lat, delivery.destination.lng];
-        const truckLatLng = [delivery.current_location.lat, delivery.current_location.lng];
-
-        // Desenha a nova rota e marcadores
-        routePolyline = L.polyline([originLatLng, destLatLng], { color: 'blue' }).addTo(map);
-        originMarker = L.marker(originLatLng).addTo(map).bindPopup(`<b>Origem:</b><br>${delivery.origin.name}`);
-        destinationMarker = L.marker(destLatLng).addTo(map).bindPopup(`<b>Destino:</b><br>${delivery.destination.name}`);
-        truckMarker = L.marker(truckLatLng, { icon: truckIcon }).addTo(map).bindPopup(`<b>Localização Atual</b>`);
-
-        // Ajusta o mapa para mostrar a rota completa
-        map.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [40, 40] });
     }
+  }
 
-    function updateTimeline(history) {
-        timelineContainer.innerHTML = ''; // Limpa o conteúdo
-        history.reverse().forEach(item => { // Mais recente primeiro
-            const date = new Date(item.timestamp);
-            const formattedDate = `${date.toLocaleDateString('pt-BR')} às ${date.toLocaleTimeString('pt-BR')}`;
-
-            const timelineItem = `
-                <div class="timeline-item">
-                    <div class="timeline-item-content">
-                        <p class="status">${item.status}</p>
-                        <p>${item.location}</p>
-                        <p class="timestamp">${formattedDate}</p>
-                    </div>
-                </div>
-            `;
-            timelineContainer.innerHTML += timelineItem;
-        });
-    }
-
-    function updateDetails(delivery) {
-        deliveryStatusEl.textContent = delivery.status;
-        deliveryOriginEl.textContent = delivery.origin.name;
-        deliveryDestinationEl.textContent = delivery.destination.name;
-        deliveryDetailsContainer.classList.remove('u-hide');
-    }
-
-
-    // --- Event Listener ---
-    searchForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const nfeKey = nfeKeyInput.value.trim();
-
-        if (!nfeKey) {
-            alert('Por favor, digite uma chave de NF-e.');
-            return;
-        }
-
-        fetch(`/mapcloud-plataforma/api/deliveries?nfe_key=${nfeKey}`)
-            .then(response => {
-                if (response.status === 404) {
-                    throw new Error('Entrega não encontrada');
-                }
-                if (!response.ok) {
-                    throw new Error('Não foi possível buscar a entrega.');
-                }
-                return response.json();
-            })
-            .then(foundDelivery => {
-                updateMap(foundDelivery);
-                updateTimeline(foundDelivery.update_history);
-                updateDetails(foundDelivery);
-            })
-            .catch(error => {
-                console.error('Erro na busca:', error);
-                alert(error.message);
-            });
+  function populateTimeline(deliveries) {
+    // Flatten events across deliveries with delivery_id attached
+    const events = [];
+    deliveries.forEach((d) => {
+      if (Array.isArray(d.update_history)) {
+        d.update_history.forEach((ev) =>
+          events.push({
+            delivery_id: d.delivery_id,
+            status: ev.status,
+            location: ev.location_description || ev.location || '',
+            timestamp: ev.timestamp,
+          })
+        );
+      }
     });
 
+    // Sort by timestamp desc
+    events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    timelineContainer.innerHTML = '';
+    if (events.length === 0) {
+      timelineContainer.innerHTML = '<p>Nenhum evento encontrado.</p>';
+      return;
+    }
+
+    events.slice(0, 50).forEach((ev) => {
+      const date = new Date(ev.timestamp);
+      const formatted = `${date.toLocaleDateString('pt-BR')} às ${date.toLocaleTimeString('pt-BR')}`;
+      const html = `
+        <div class="timeline-item">
+          <div class="timeline-item-content">
+            <p class="status">${ev.status}</p>
+            <p class="delivery-id">Entrega: ${ev.delivery_id || ''}</p>
+            <p>${ev.location || ''}</p>
+            <p class="timestamp">${formatted}</p>
+          </div>
+        </div>`;
+      timelineContainer.insertAdjacentHTML('beforeend', html);
+    });
+  }
+
+  async function loadDashboard() {
+    try {
+      // KPIs
+      const metricsRes = await fetch('/mapcloud-plataforma/api/metrics');
+      if (!metricsRes.ok) throw new Error('Falha ao carregar métricas');
+      const metrics = await metricsRes.json();
+      populateKPIs(metrics);
+
+      // Deliveries list
+      const deliveriesRes = await fetch('/mapcloud-plataforma/api/deliveries');
+      if (!deliveriesRes.ok) throw new Error('Falha ao carregar entregas');
+      const deliveries = await deliveriesRes.json();
+
+      populateMap(deliveries);
+      populateTimeline(deliveries);
+    } catch (err) {
+      console.error('Erro ao carregar dashboard', err);
+    }
+  }
+
+  loadDashboard();
+
+  // Opcional: auto-refresh a cada 30s
+  setInterval(loadDashboard, 30000);
 });

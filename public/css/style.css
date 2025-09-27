@@ -1,32 +1,63 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
+/* Ajustes Gerais */
+body {
+    background-color: #f7f7f7;
 }
 
+/******** KPIs ********/
+.kpi-strip {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+/* força linha única de KPIs */
+.kpi-strip .row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+    flex-wrap: nowrap; /* um ao lado do outro */
+}
+
+/* 3 colunas fixas: calcula 1/3 considerando o gap total (2 gaps de 0.75rem) */
+.kpi-strip .row > [class^="col-"] {
+    flex: 0 0 calc((100% - 1.5rem) / 3);
+    max-width: calc((100% - 1.5rem) / 3);
+}
+
+#kpi-container .p-card--highlighted {
+    text-align: center;
+    padding: 0.75rem 0.5rem; /* reduzido */
+    height: 100%;
+}
+
+#kpi-container h4 {
+    color: #666;
+    font-size: 0.8rem; /* menor */
+}
+
+.kpi-value {
+    font-size: 1.6rem; /* menor que heading--2 */
+    line-height: 1.1;
+}
+
+/* Mapa */
 #map {
     width: 100%;
-    /* A altura será ajustada com base na exibição ou não dos detalhes */
-    height: calc(100vh - 210px); 
-}
-
-#nfe-data.p-card {
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
+    height: 62vh; /* ligeiro aumento pois KPIs ocupam menos */
     border-radius: 4px;
-    background-color: #f9f9f9;
 }
 
+/* Timeline / Feed de Eventos */
 #timeline-container {
+    height: 62vh;
+    overflow-y: auto;
     border-left: 3px solid #e6e6e6;
-    padding-left: 20px;
+    padding: 10px 20px;
 }
 
 .timeline-item {
     position: relative;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
 }
 
 .timeline-item:last-child {
@@ -39,15 +70,11 @@ body, html {
     position: absolute;
     left: -29.5px;
     top: 5px;
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background-color: #0076f6; /* Azul do Vanilla */
     border: 3px solid #fff;
-}
-
-.timeline-item-content {
-    padding: 5px;
 }
 
 .timeline-item-content p {
@@ -57,7 +84,13 @@ body, html {
 
 .timeline-item-content .status {
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
+}
+
+.timeline-item-content .delivery-id {
+    color: #333;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 
 .timeline-item-content .timestamp {

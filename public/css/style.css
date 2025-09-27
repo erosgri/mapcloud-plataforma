@@ -1,0 +1,11 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    width: 100%;
+    height: calc(100vh - 58px); /* Ajusta a altura do mapa para preencher a tela menos o cabeçalho */
+}

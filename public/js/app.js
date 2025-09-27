@@ -88,26 +88,24 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        fetch('/mapcloud-plataforma/api/deliveries')
+        fetch(`/mapcloud-plataforma/api/deliveries?nfe_key=${nfeKey}`)
             .then(response => {
-                if (!response.ok) throw new Error('Não foi possível buscar as entregas.');
+                if (response.status === 404) {
+                    throw new Error('Entrega não encontrada');
+                }
+                if (!response.ok) {
+                    throw new Error('Não foi possível buscar a entrega.');
+                }
                 return response.json();
             })
-            .then(deliveries => {
-                const foundDelivery = deliveries.find(d => d.nfe_key === nfeKey);
-                
-                if (foundDelivery) {
-                    updateMap(foundDelivery);
-                    updateTimeline(foundDelivery.update_history);
-                    updateDetails(foundDelivery);
-                } else {
-                    alert('Nenhuma entrega encontrada para esta chave de NF-e.');
-                    // Opcional: limpar a tela se nada for encontrado
-                }
+            .then(foundDelivery => {
+                updateMap(foundDelivery);
+                updateTimeline(foundDelivery.update_history);
+                updateDetails(foundDelivery);
             })
             .catch(error => {
                 console.error('Erro na busca:', error);
-                alert('Ocorreu um erro ao buscar os dados da entrega.');
+                alert(error.message);
             });
     });
 

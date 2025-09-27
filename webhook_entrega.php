@@ -1,4 +1,5 @@
 <?php
+require_once 'pdo/conexao.php';
 // Define o tipo de conteúdo da resposta como JSON
 header('Content-Type: application/json');
 
@@ -30,37 +31,54 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     json_response(400, ['status' => 'error', 'message' => 'JSON inválido.']);
 }
 
-// 4. Lógica para atualizar os dados da entrega
-$deliveries_file = 'data/deliveries.json';
-$json_data_db = file_get_contents($deliveries_file);
-$deliveries = json_decode($json_data_db, true);
+// 4. Lógica para atualizar os dados da entrega no banco de dados
+$conexao = novaConexao();
 
-$delivery_found = false;
-foreach ($deliveries as $key => $delivery) {
-    if ($delivery['delivery_id'] == $event_data['delivery_id']) {
-        // Atualiza o status e a localização
-        $deliveries[$key]['status'] = $event_data['status'];
-        $deliveries[$key]['current_location'] = $event_data['location'];
+// Inicia uma transação para garantir a consistência dos dados
+$conexao->beginTransaction();
 
-        // Adiciona um novo registro ao histórico
-        $history_entry = [
-            'timestamp' => date('Y-m-d\TH:i:s\Z'),
-            'status' => $event_data['status'],
-            'location' => 'Atualizado via Webhook' 
-        ];
-        $deliveries[$key]['update_history'][] = $history_entry;
-        
-        $delivery_found = true;
-        break;
+try {
+    // Primeiro, encontra o ID interno da entrega
+    $stmt = $conexao->prepare("SELECT id FROM entregas WHERE delivery_id = ?");
+    $stmt->execute([$event_data['delivery_id']]);
+    $entrega = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$entrega) {
+        throw new Exception('Entrega não encontrada.');
     }
-}
+    $entrega_id = $entrega['id'];
 
-if (!$delivery_found) {
-    json_response(404, ['status' => 'error', 'message' => 'Entrega não encontrada.']);
-}
+    // Atualiza a tabela de entregas
+    $stmt_update = $conexao->prepare(
+        "UPDATE entregas SET status = ?, current_lat = ?, current_lng = ? WHERE id = ?"
+    );
+    $stmt_update->execute([
+        $event_data['status'],
+        $event_data['location']['lat'],
+        $event_data['location']['lng'],
+        $entrega_id
+    ]);
 
-// Salva os dados atualizados de volta no arquivo JSON
-file_put_contents($deliveries_file, json_encode($deliveries, JSON_PRETTY_PRINT));
+    // Insere o novo evento no histórico
+    $stmt_insert = $conexao->prepare(
+        "INSERT INTO eventos_entrega (entrega_id, timestamp, status, location_description) VALUES (?, ?, ?, ?)"
+    );
+    $stmt_insert->execute([
+        $entrega_id,
+        date('Y-m-d H:i:s'), // Timestamp atual
+        $event_data['status'],
+        'Atualizado via Webhook'
+    ]);
+    
+    // Se tudo deu certo, confirma as alterações
+    $conexao->commit();
+
+} catch (Exception $e) {
+    // Se algo deu errado, desfaz as alterações
+    $conexao->rollBack();
+    // Você pode querer logar o $e->getMessage() em um arquivo de erro
+    json_response(404, ['status' => 'error', 'message' => $e->getMessage()]);
+}
 
 
 // 5. Responde com sucesso

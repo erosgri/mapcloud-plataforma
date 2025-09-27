@@ -62,6 +62,51 @@ function get_delivery_by_nfe_key($nfe_key) {
     return $delivery_details;
 }
 
+function get_data_from_cep($cep) {
+    // 1. Limpa e valida o CEP
+    $cep = preg_replace('/[^0-9]/', '', $cep);
+    if (strlen($cep) !== 8) {
+        return ['error' => 'CEP inválido.'];
+    }
+
+    // 2. Consulta a API do ViaCEP
+    $via_cep_url = "https://viacep.com.br/ws/{$cep}/json/";
+    $address_data = json_decode(@file_get_contents($via_cep_url), true);
+
+    if (isset($address_data['erro'])) {
+        return ['error' => 'CEP não encontrado.'];
+    }
+
+    // 3. Monta a query para a API de geocodificação (Nominatim)
+    $query = http_build_query([
+        'street' => $address_data['logradouro'],
+        'city' => $address_data['localidade'],
+        'state' => $address_data['uf'],
+        'format' => 'json',
+        'limit' => 1
+    ]);
+
+    $nominatim_url = "https://nominatim.openstreetmap.org/search?{$query}";
+    
+    // É necessário um User-Agent para usar a API do Nominatim
+    $context = stream_context_create(['http' => ['header' => 'User-Agent: MapCloudPlataforma/1.0']]);
+    $geo_data = json_decode(@file_get_contents($nominatim_url, false, $context), true);
+
+    // 4. Combina os resultados
+    $result = $address_data;
+    if (!empty($geo_data)) {
+        $result['lat'] = $geo_data[0]['lat'];
+        $result['lon'] = $geo_data[0]['lon'];
+    } else {
+        $result['lat'] = null;
+        $result['lon'] = null;
+        $result['warning'] = 'Coordenadas não encontradas para este endereço.';
+    }
+
+    return $result;
+}
+
+
 // --- Roteamento ---
 
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -110,6 +155,20 @@ switch ($route_parts[0]) {
             json_response(200, $metrics);
         } else {
             json_response(405, ['error' => 'Método não permitido']);
+        }
+        break;
+
+    case 'cep':
+        if (isset($route_parts[1]) && $method === 'GET') {
+            $cep = $route_parts[1];
+            $data = get_data_from_cep($cep);
+            if (isset($data['error'])) {
+                json_response(404, $data);
+            } else {
+                json_response(200, $data);
+            }
+        } else {
+            json_response(400, ['error' => 'CEP não fornecido.']);
         }
         break;
 

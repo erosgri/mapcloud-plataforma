@@ -57,17 +57,19 @@ Com as entregas carregadas, você pode visualizar os detalhes.
 
 ## Passo 6: Atualizar o Status das Entregas
 
-Simule o progresso do motorista atualizando o status das entregas.
+Simule o progresso do motorista atualizando o status das entregas. Para habilitar os botões de ação, você primeiro precisa selecionar as entregas desejadas.
 
 1.  **Marcar como "Em Trânsito":**
-    *   Na lista de entregas, selecione uma ou mais entregas marcando a caixa de seleção ao lado delas.
-    *   Clique no botão **"Marcar como Em Trânsito"**.
-    *   As entregas selecionadas mudarão de status, e o ícone no mapa se tornará um caminhão 🚚, agora posicionado no endereço de *destino*.
+    *   Encontre uma ou mais entregas com o status "Aguardando Coleta".
+    *   **Marque a caixa de seleção (checkbox)** ao lado de cada entrega que deseja atualizar.
+    *   O botão **"Marcar como Em Trânsito"** ficará ativo. Clique nele.
+    *   As entregas selecionadas mudarão de status, e seus ícones no mapa se tornarão caminhões 🚚, agora posicionados nos endereços de *destino*.
 
 2.  **Marcar como "Entregue":**
-    *   Selecione uma ou mais entregas que estão "Em Trânsito".
-    *   Clique no botão **"Marcar como Entregue"**.
-    *   As entregas serão movidas para a seção "Concluídas", e os KPIs (indicadores) no topo da página serão atualizados.
+    *   Encontre uma ou mais entregas que estejam "Em Trânsito".
+    *   **Marque a caixa de seleção (checkbox)** ao lado delas.
+    *   O botão **"Marcar como Entregue"** ficará ativo. Clique nele.
+    *   As entregas serão movidas para a seção "Concluídas", e os KPIs no topo da página serão atualizados.
 
 ## Passo 7 (Opcional): Testar o Sistema de Erros
 

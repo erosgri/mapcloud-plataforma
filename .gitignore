@@ -1,2 +1,7 @@
+# Arquivos de log
+*.log
+nfe_debug.log
+
+# Arquivos de dependência
 /node_modules
-/webhook_events.log
+/vendor

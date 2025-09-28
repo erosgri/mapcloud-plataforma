@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe>
+  <ide>
+    <nNF>35250900000003000300550030000000033000000037</nNF>
+    <natOp>Serralheria do jose</natOp>
+    <dhEmi>2025-09-28T12:00:00</dhEmi>
+  </ide>
+  <emit>
+    <CNPJ>33.333.333/0001-33</CNPJ>
+    <xNome>Loja de Exemplo SP 3</xNome>
+    <enderEmit>Rua Augusta, 2000, Cerqueira César, São Paulo, SP, CEP:01412000</enderEmit>
+  </emit>
+  <dest>
+    <CPF>333.333.333-33</CPF>
+    <xNome>carlos eduardo</xNome>
+    <enderDest>Avenida Atlântica, 1702, Copacabana, Rio de Janeiro, RJ, CEP:22021001</enderDest>
+  </dest>
+  <det nItem="1">
+    <prod>
+      <cProd>P003</cProd>
+      <xProd>Produto de Teste 3</xProd>
+      <vProd>500.00</vProd>
+    </prod>
+  </det>
+  <total>
+    <vProd>500.00</vProd>
+    <vNF>500.00</vNF>
+  </total>
+</NFe>

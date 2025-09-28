@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe>
+  <ide>
+    <nNF>35250900000002000200550020000000022000000028</nNF>
+    <natOp>Venda de Mercadoria</natOp>
+    <dhEmi>2025-09-28T11:00:00</dhEmi>
+  </ide>
+  <emit>
+    <CNPJ>22.222.222/0001-22</CNPJ>
+    <xNome>Fornecedor de Teste SP 2</xNome>
+    <enderEmit>Avenida Paulista, 1500, Bela Vista, São Paulo, SP, CEP:01310100</enderEmit>
+  </emit>
+  <dest>
+    <CPF>222.222.222-22</CPF>
+    <xNome>Comprador Final RJ 2</xNome>
+    <enderDest>Rua Primeiro de Marco, 23, Centro, Rio de Janeiro, RJ, CEP:20010000</enderDest>
+  </dest>
+  <det nItem="1">
+    <prod>
+      <cProd>P002</cProd>
+      <xProd>Produto de Teste 2</xProd>
+      <vProd>250.50</vProd>
+    </prod>
+  </det>
+  <total>
+    <vProd>250.50</vProd>
+    <vNF>250.50</vNF>
+  </total>
+</NFe>

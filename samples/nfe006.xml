@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe>
+  <ide>
+    <nNF>35250900000007000700550070000000077000000073</nNF>
+    <natOp>Venda de Mercadoria</natOp>
+    <dhEmi>2025-09-28T16:00:00</dhEmi>
+  </ide>
+  <emit>
+    <CNPJ>77.777.777/0001-77</CNPJ>
+    <xNome>Livraria Fictícia SP 7</xNome>
+    <enderEmit>Rua Maria Antônia, 294, Vila Buarque, São Paulo, SP, CEP:01222010</enderEmit>
+  </emit>
+  <dest>
+    <CPF>777.777.777-77</CPF>
+    <xNome>Leitor Compulsivo RJ 7</xNome>
+    <enderDest>Rua Sete de Setembro, 99, Centro, Rio de Janeiro, RJ, CEP:20050002</enderDest>
+  </dest>
+  <det nItem="1">
+    <prod>
+      <cProd>P007</cProd>
+      <xProd>Produto de Teste 7 - Livro</xProd>
+      <vProd>59.90</vProd>
+    </prod>
+  </det>
+  <total>
+    <vProd>59.90</vProd>
+    <vNF>59.90</vNF>
+  </total>
+</NFe>

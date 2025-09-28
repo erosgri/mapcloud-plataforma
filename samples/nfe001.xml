@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe>
+  <ide>
+    <nNF>35250900000001000100550010000000011000000019</nNF>
+    <natOp>Venda de Mercadoria</natOp>
+    <dhEmi>2025-09-28T10:00:00</dhEmi>
+  </ide>
+  <emit>
+    <CNPJ>11.111.111/0001-11</CNPJ>
+    <xNome>Empresa de Exemplo SP 1</xNome>
+    <enderEmit>Rua Ficticia de Sao Paulo, 100, Centro, São Paulo, SP, CEP:01001000</enderEmit>
+  </emit>
+  <dest>
+    <CPF>111.111.111-11</CPF>
+    <xNome>Cliente Final RJ 1</xNome>
+    <enderDest>Avenida Ficticia do Rio de Janeiro, 100, Centro, Rio de Janeiro, RJ, CEP:20010000</enderDest>
+  </dest>
+  <det nItem="1">
+    <prod>
+      <cProd>P001</cProd>
+      <xProd>Produto de Teste 1</xProd>
+      <vProd>100.00</vProd>
+    </prod>
+  </det>
+  <total>
+    <vProd>100.00</vProd>
+    <vNF>100.00</vNF>
+  </total>
+</NFe>

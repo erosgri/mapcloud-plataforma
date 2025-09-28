@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe>
+  <ide>
+    <nNF>35250900000004000400550040000000044000000046</nNF>
+    <natOp>Venda de Mercadoria</natOp>
+    <dhEmi>2025-09-28T13:00:00</dhEmi>
+  </ide>
+  <emit>
+    <CNPJ>44.444.444/0001-44</CNPJ>
+    <xNome>Distribuidora de Teste SP 4</xNome>
+    <enderEmit>Rua da Consolação, 2500, Consolação, São Paulo, SP, CEP:01301100</enderEmit>
+  </emit>
+  <dest>
+    <CPF>444.444.444-44</CPF>
+    <xNome>Recebedor Final RJ 4</xNome>
+    <enderDest>Rua Visconde de Pirajá, 414, Ipanema, Rio de Janeiro, RJ, CEP:22410002</enderDest>
+  </dest>
+  <det nItem="1">
+    <prod>
+      <cProd>P004</cProd>
+      <xProd>Produto de Teste 4</xProd>
+      <vProd>123.45</vProd>
+    </prod>
+  </det>
+  <total>
+    <vProd>123.45</vProd>
+    <vNF>123.45</vNF>
+  </total>
+</NFe>

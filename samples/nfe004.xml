@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe>
+  <ide>
+    <nNF>35250900000005000500550050000000055000000055</nNF>
+    <natOp>Venda de Mercadoria</natOp>
+    <dhEmi>2025-09-28T14:00:00</dhEmi>
+  </ide>
+  <emit>
+    <CNPJ>55.555.555/0001-55</CNPJ>
+    <xNome>Comércio de Roupas SP 5</xNome>
+    <enderEmit>Avenida Brigadeiro Faria Lima, 1571, Jardim Paulistano, São Paulo, SP, CEP:01452001</enderEmit>
+  </emit>
+  <dest>
+    <CPF>555.555.555-55</CPF>
+    <xNome>Cliente Varejo RJ 5</xNome>
+    <enderDest>Rua Farme de Amoedo, 12, Ipanema, Rio de Janeiro, RJ, CEP:22420020</enderDest>
+  </dest>
+  <det nItem="1">
+    <prod>
+      <cProd>P005</cProd>
+      <xProd>Produto de Teste 5 - Camiseta</xProd>
+      <vProd>79.90</vProd>
+    </prod>
+  </det>
+  <total>
+    <vProd>79.90</vProd>
+    <vNF>79.90</vNF>
+  </total>
+</NFe>

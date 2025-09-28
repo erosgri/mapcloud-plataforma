@@ -1,6 +1,9 @@
-# Arquivos de log
+# Arquivos de log e sistema
 *.log
-nfe_debug.log
+.DS_Store
+
+# Arquivo de configuração local
+config.php
 
 # Arquivos de dependência
 /node_modules

@@ -43,7 +43,8 @@ function sanitize_ascii($value) {
 
 // Função para ler os dados do banco de dados
 function get_all_deliveries($motorista_id = null) {
-    $conexao = novaConexao();
+    global $pdo; // Usa a conexão PDO global
+    $conexao = $pdo;
     
     // 1. Busca as entregas e o nome do motorista
     $sql_deliveries = "SELECT e.*, m.nome as driver_name 
@@ -95,7 +96,8 @@ function get_all_deliveries($motorista_id = null) {
 
 // Função para buscar uma entrega específica por ID
 function get_delivery_by_nfe_key($nfe_key) {
-    $conexao = novaConexao();
+    global $pdo; // Usa a conexão PDO global
+    $conexao = $pdo;
     
     // Busca a entrega principal
     $stmt = $conexao->prepare("SELECT * FROM entregas WHERE nfe_key = ?");
@@ -138,8 +140,9 @@ function get_delivery_by_nfe_key($nfe_key) {
 }
 
 function get_all_drivers() {
-    $conexao = novaConexao();
-    $stmt = $conexao->query("SELECT id, nome, placa, documento, telefone FROM motoristas ORDER BY nome");
+    global $pdo; // Usa a conexão PDO global
+    $conexao = $pdo;
+    $stmt = $conexao->query("SELECT id, nome, placa_veiculo AS placa, documento, telefone FROM motoristas ORDER BY nome");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // sanitiza campos textuais
     foreach ($rows as &$r) {
@@ -233,7 +236,8 @@ switch ($route_parts[0]) {
 
     case 'metrics':
         if ($method === 'GET') {
-            $conexao = novaConexao();
+            global $pdo; // Usa a conexão PDO global
+            $conexao = $pdo;
             $motoristaId = $_GET['motorista_id'] ?? null;
             if ($motoristaId) {
                 $stmt = $conexao->prepare("SELECT status, COUNT(*) as count FROM entregas WHERE motorista_id = ? GROUP BY status");
@@ -277,9 +281,10 @@ switch ($route_parts[0]) {
                 json_response(400, ['error' => 'Nome é obrigatório']);
             }
             
-            $conexao = novaConexao();
+            global $pdo; // Usa a conexão PDO global
+            $conexao = $pdo;
             try {
-                $stmt = $conexao->prepare("INSERT INTO motoristas (nome, placa, documento, telefone) VALUES (?, ?, ?, ?)");
+                $stmt = $conexao->prepare("INSERT INTO motoristas (nome, placa_veiculo, documento, telefone) VALUES (?, ?, ?, ?)");
                 $stmt->execute([
                     sanitize_ascii($input['nome']),
                     sanitize_ascii($input['placa'] ?? null),
@@ -318,7 +323,8 @@ switch ($route_parts[0]) {
                 json_response(400, ['error' => 'Dados inválidos']);
             }
             
-            $conexao = novaConexao();
+            global $pdo; // Usa a conexão PDO global
+            $conexao = $pdo;
             $conexao->beginTransaction();
             
             try {

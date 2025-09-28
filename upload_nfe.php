@@ -186,7 +186,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             file_put_contents('nfe_debug.log', "CEP Destinatário: $cep_dest\n", FILE_APPEND);
         }
 
-        // Para este formato, a chave não existe, usamos o número da nota
+        // A conexão PDO já foi estabelecida em conexao.php e está disponível como $pdo
+        global $pdo;
+        $conexao = $pdo;
+
+        // Para este formato, a chave é o número da nota
         $chave = $chave_nfe; 
         if (empty($chave)) {
             // Se não encontrou número, usar timestamp como fallback
@@ -207,8 +211,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             file_put_contents('nfe_debug.log', "Coordenadas Destino: $dest_lat, $dest_lng\n", FILE_APPEND);
         }
 
-        $db = novaConexao();
-        
         // --- Verificação de Duplicidade ---
         $delivery_id = $chave ? substr($chave, -5) : ($numero ?: uniqid());
         
@@ -217,18 +219,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             file_put_contents('nfe_debug.log', "Delivery ID: $delivery_id\n", FILE_APPEND);
             file_put_contents('nfe_debug.log', "Motorista ID: $motorista_id\n", FILE_APPEND);
         }
-        $stmt_check = $db->prepare("SELECT id FROM entregas WHERE delivery_id = ?");
+        $stmt_check = $conexao->prepare("SELECT id FROM entregas WHERE delivery_id = ?");
         $stmt_check->execute([$delivery_id]);
         if ($stmt_check->fetch()) {
             throw new Exception("Esta NF-e (ID: {$delivery_id}) já foi cadastrada anteriormente.");
         }
         // --- Fim da Verificação ---
 
-        $db->beginTransaction();
+        $conexao->beginTransaction();
         
         $status_inicial = 'pending_pickup';
 
-        $stmt = $db->prepare("INSERT INTO entregas (
+        $stmt = $conexao->prepare("INSERT INTO entregas (
             delivery_id, nfe_key, status,
             origin_name, origin_lat, origin_lng,
             destination_name, destination_lat, destination_lng,
@@ -241,19 +243,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $destinatario, $dest_lat, $dest_lng,
             $origin_lat, $origin_lng, $motorista_id
         ]);
-        $entrega_id = (int)$db->lastInsertId();
+        $entrega_id = (int)$conexao->lastInsertId();
 
         // Insere evento inicial
-        $stmtEv = $db->prepare("INSERT INTO eventos_entrega (entrega_id, timestamp, status, location_description) VALUES (?, ?, ?, ?)");
+        $stmtEv = $conexao->prepare("INSERT INTO eventos_entrega (entrega_id, timestamp, status, location_description) VALUES (?, ?, ?, ?)");
         $stmtEv->execute([$entrega_id, date('Y-m-d H:i:s'), $status_inicial, 'NF-e cadastrada via upload']);
 
-        $db->commit();
+        $conexao->commit();
         
         json_response(200, ['message' => 'NF-e processada e salva com sucesso!']);
 
     } catch (Exception $e) {
-        if (isset($db) && $db->inTransaction()) {
-            $db->rollBack();
+        if (isset($conexao) && $conexao->inTransaction()) {
+            $conexao->rollBack();
         }
         json_response(400, ['error' => $e->getMessage()]);
     }

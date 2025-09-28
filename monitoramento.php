@@ -39,7 +39,8 @@ $motorista_nome = 'Motorista';
 
 if ($motorista_id) {
     try {
-        $conexao = novaConexao();
+        // A conexão PDO agora está disponível na variável $pdo
+        $conexao = $pdo;
         $stmt = $conexao->prepare("SELECT nome FROM motoristas WHERE id = ?");
         $stmt->execute([$motorista_id]);
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -31,23 +31,25 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     json_response(400, ['status' => 'error', 'message' => 'JSON inválido.']);
 }
 
-// 4. Lógica para atualizar os dados da entrega no banco de dados
-$conexao = novaConexao();
+// Conecta ao banco de dados usando a nova conexão global
+require_once 'pdo/conexao.php';
+global $pdo;
+$conexao = $pdo;
+
+// Obter o ID da entrega a partir do delivery_id (que é a chave da NF-e)
+$stmt = $conexao->prepare("SELECT id FROM entregas WHERE delivery_id = ?");
+$stmt->execute([$event_data['delivery_id']]);
+$entrega = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$entrega) {
+    throw new Exception('Entrega não encontrada.');
+}
+$entrega_id = $entrega['id'];
 
 // Inicia uma transação para garantir a consistência dos dados
 $conexao->beginTransaction();
 
 try {
-    // Primeiro, encontra o ID interno da entrega
-    $stmt = $conexao->prepare("SELECT id FROM entregas WHERE delivery_id = ?");
-    $stmt->execute([$event_data['delivery_id']]);
-    $entrega = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$entrega) {
-        throw new Exception('Entrega não encontrada.');
-    }
-    $entrega_id = $entrega['id'];
-
     // Atualiza a tabela de entregas
     $stmt_update = $conexao->prepare(
         "UPDATE entregas SET status = ?, current_lat = ?, current_lng = ? WHERE id = ?"

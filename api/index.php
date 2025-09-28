@@ -3,6 +3,19 @@
 require_once '../pdo/conexao.php';
 header('Content-Type: application/json; charset=utf-8');
 
+// --- Tratamento de Erros Global ---
+// Captura erros e exceções para sempre retornar uma resposta JSON válida.
+set_exception_handler(function ($exception) {
+    json_response(500, ['error' => 'Erro interno no servidor: ' . $exception->getMessage()]);
+});
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+
 // --- Funções Auxiliares ---
 
 function json_response($status_code, $data) {
@@ -142,6 +155,7 @@ function get_delivery_by_nfe_key($nfe_key) {
 function get_all_drivers() {
     global $pdo; // Usa a conexão PDO global
     $conexao = $pdo;
+    // Corrigido: Seleciona 'placa_veiculo' e a renomeia para 'placa' para compatibilidade com o front-end
     $stmt = $conexao->query("SELECT id, nome, placa_veiculo AS placa, documento, telefone FROM motoristas ORDER BY nome");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // sanitiza campos textuais
